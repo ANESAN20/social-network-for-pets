@@ -1,0 +1,134 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>{% block title %}Pet Social{% endblock %}</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+
+    <style>
+        body.dark-mode {
+            background-color: #121212;
+            color: #f1f1f1;
+        }
+        nav.navbar {
+            background-color: #f8f9fa;
+            transition: background-color 0.3s ease;
+        }
+        body.dark-mode nav.navbar {
+            background-color: #222;
+        }
+        /* Navbar link renkleri */
+        nav.navbar a.nav-link, nav.navbar .navbar-brand {
+            color: #007bff;
+            transition: color 0.3s ease;
+        }
+        body.dark-mode nav.navbar a.nav-link,
+        body.dark-mode nav.navbar .navbar-brand {
+            color: #ddd;
+        }
+    </style>
+</head>
+<body>
+    {% if user.is_authenticated %}
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+      <div class="container">
+        <a class="navbar-brand" href="{% url 'home' %}">
+          <i class="bi bi-house-door-fill"></i> Pet Social
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'home' %}">
+                <i class="bi bi-house"></i> Home
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'pet_list' %}">
+                <i class="bi bi-bug"></i> Pet List
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'post_list' %}">
+                <i class="bi bi-card-text"></i> Post List
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'message_list' %}">
+                <i class="bi bi-envelope"></i> Messages
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'profile' %}">
+                <i class="bi bi-person-circle"></i> Profile
+              </a>
+            </li>
+
+            {% if user.is_authenticated %}
+                {% if user.user_type == 'Admin' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'admin_dashboard' %}">
+                          <i class="bi bi-speedometer2"></i> Admin Dashboard
+                        </a>
+                    </li>
+                {% elif user.user_type == 'Veterinarian' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'veterinarian_dashboard' %}">
+                          <i class="bi bi-heart-pulse"></i> Vet Dashboard
+                        </a>
+                    </li>
+                {% endif %}
+            {% endif %}
+
+          </ul>
+
+          <ul class="navbar-nav">
+              <li class="nav-item">
+                <form method="post" action="{% url 'logout' %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-link nav-link" style="display:inline; padding:0;">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                  </button>
+                </form>
+              </li>
+          </ul>
+
+          <button id="themeToggle" class="btn btn-outline-secondary btn-sm ms-3">
+            <i class="bi bi-moon-fill"></i> Toggle Dark Mode
+          </button>
+        </div>
+      </div>
+    </nav>
+    {% endif %}
+
+    <div class="container">
+        {% if messages %}
+          <div class="alert alert-warning" role="alert">
+            {% for message in messages %}
+              <div>{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+        
+        {% block content %}{% endblock %}
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      const toggleButton = document.getElementById('themeToggle');
+      toggleButton.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+      });
+    </script>
+</body>
+</html>

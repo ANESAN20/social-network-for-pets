@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Add Friendship{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Add a New Friendship</h2>
+
+  <form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label for="pet1" class="form-label">Select Pet 1:</label>
+      <select name="pet1" id="pet1" class="form-select" required>
+        {% for pet in pets %}
+          <option value="{{ pet.id }}">{{ pet.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label for="pet2" class="form-label">Select Pet 2:</label>
+      <select name="pet2" id="pet2" class="form-select" required>
+        {% for pet in all_pets %}
+          <option value="{{ pet.id }}">{{ pet.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <button type="submit" class="btn btn-success">Add Friendship</button>
+    <a href="{% url 'friendship_list' %}" class="btn btn-secondary ms-2">Back to Friendships</a>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}Veterinarian Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Welcome, Veterinarian!</h2>
+
+  <div class="row gy-4">
+    
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">Your Pets</h5>
+        </div>
+        <ul class="list-group list-group-flush">
+          {% for pet in pets %}
+            <li class="list-group-item"><strong>{{ pet.name }}</strong> ({{ pet.species }}, {{ pet.age }} years old)</li>
+          {% empty %}
+            <li class="list-group-item text-muted">You have no pets added yet.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-header bg-success text-white">
+          <h5 class="mb-0">Your Appointments</h5>
+        </div>
+        <table class="table table-striped mb-0">
+          <thead>
+            <tr>
+              <th>Pet</th>
+              <th>Date</th>
+              <th>Reason</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for appointment in appointments %}
+            <tr>
+              <td>{{ appointment.pet.name }}</td>
+              <td>{{ appointment.date|date:"d M Y H:i" }}</td>
+              <td>{{ appointment.reason }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="3" class="text-muted text-center">No appointments found.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <div class="card-body">
+          <h6 class="card-title">Add New Appointment</h6>
+          <form method="post" novalidate>
+            {% csrf_token %}
+            {{ appointment_form.as_p }}
+            <button type="submit" name="add_appointment" class="btn btn-success">Add Appointment</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="col-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-info text-white">
+          <h5 class="mb-0">Pet Health Notes</h5>
+        </div>
+        <ul class="list-group list-group-flush">
+          {% for note in vet_notes %}
+            <li class="list-group-item">
+              {{ note.note }}
+              <br>
+              <small class="text-muted">for <strong>{{ note.pet.name }}</strong> on {{ note.created_at|date:"d M Y H:i" }}</small>
+            </li>
+          {% empty %}
+            <li class="list-group-item text-muted">No notes added yet.</li>
+          {% endfor %}
+        </ul>
+        <div class="card-body">
+          <h6 class="card-title">Add New Note</h6>
+          <form method="post" novalidate>
+            {% csrf_token %}
+            {{ note_form.as_p }}
+            <button type="submit" name="add_note" class="btn btn-primary">Add Note</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% for message in messages %}
+    <div class="alert alert-info mt-3">{{ message }}</div>
+  {% endfor %}
+</div>
+{% endblock %}

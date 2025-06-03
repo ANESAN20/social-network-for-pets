@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Admin - Post List{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">All Posts</h2>
+    {% if posts %}
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>User</th>
+                    <th>Content</th>
+                    <th>Created At</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for post in posts %}
+                <tr>
+                    <td>{{ post.id }}</td>
+                    <td>{{ post.user.username }}</td>
+                    <td>{{ post.content|truncatechars:50 }}</td>
+                    <td>{{ post.created_at|date:"M d, Y H:i" }}</td>
+                    <td>
+                        <form method="post" action="{% url 'admin_post_delete' post.id %}" onsubmit="return confirm('Are you sure you want to delete this post?');">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No posts available.</p>
+    {% endif %}
+    <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary mt-3">Back to Dashboard</a>
+</div>
+{% endblock %}

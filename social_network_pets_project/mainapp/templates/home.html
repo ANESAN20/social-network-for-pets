@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+  <h1 class="mb-4">Welcome, <strong>{{ user.username }}</strong>!</h1>
+
+  <div class="row g-4">
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">Your Pets</h5>
+        </div>
+        <div class="card-body">
+          {% if pets %}
+          <ul class="list-group list-group-flush">
+            {% for pet in pets %}
+            <li class="list-group-item">
+              <strong>{{ pet.name }}</strong> <small class="text-muted">({{ pet.species }})</small>
+            </li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          <p class="text-muted mb-0">You have no pets added yet.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-header bg-secondary text-white">
+          <h5 class="mb-0">Your Pets' Friendships</h5>
+        </div>
+        <div class="card-body">
+          {% if friendships %}
+          <ul class="list-group list-group-flush">
+            {% for friendship in friendships %}
+            <li class="list-group-item">
+              <strong>{{ friendship.pet1.name }}</strong> is friends with <strong>{{ friendship.pet2.name }}</strong>
+            </li>
+            {% endfor %}
+          </ul>
+          {% else %}
+          <p class="text-muted mb-0">No friendships found.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-4">
+    <a href="{% url 'add_pet' %}" class="btn btn-primary me-2">Add a New Pet</a>
+    <a href="{% url 'friendship_list' %}" class="btn btn-outline-secondary">Manage Friendships</a>
+  </div>
+</div>
+{% endblock %}

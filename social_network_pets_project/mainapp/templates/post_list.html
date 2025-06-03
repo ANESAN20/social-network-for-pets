@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Post List{% endblock %}
+
+{% block content %}
+<h2>Posts</h2>
+<a href="{% url 'post_create' %}" class="btn btn-success mb-3">Create New Post</a>
+
+{% if posts %}
+  <div class="list-group">
+    {% for post in posts %}
+      <a href="{% url 'post_detail' post.id %}" class="list-group-item list-group-item-action">
+        <strong>{{ post.user.username }}</strong> - {{ post.created_at|date:"M d, Y H:i" }}<br>
+        {{ post.content|linebreaksbr }}
+        {% if post.image %}
+          <img src="{{ post.image.url }}" alt="Post Image" class="img-fluid mt-2" style="max-width: 200px;">
+        {% elif post.image_url %}
+          <img src="{{ post.image_url }}" alt="Post Image" class="img-fluid mt-2" style="max-width: 200px;">
+        {% endif %}
+        <div class="mt-1">
+          <small>{{ post.like_count }} likes</small>
+          {% if post.user_has_liked %}
+            <span class="badge bg-primary ms-2">You liked this</span>
+          {% endif %}
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+{% else %}
+  <p>No posts yet.</p>
+{% endif %}
+{% endblock %}
+
+

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}Pet List{% endblock %}
+
+{% block content %}
+<h2>Your Pets</h2>
+
+{% if pets %}
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Species</th>
+      <th>Breed</th>
+      <th>Age</th>
+      <th>Gender</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for pet in pets %}
+    <tr>
+      <td>{{ pet.name }}</td>
+      <td>{{ pet.species }}</td>
+      <td>{{ pet.breed }}</td>
+      <td>{{ pet.age }}</td>
+      <td>{{ pet.gender }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>You have no pets added yet.</p>
+{% endif %}
+
+<a href="{% url 'add_pet' %}" class="btn btn-primary">Add a New Pet</a>
+{% endblock %}

@@ -1,0 +1,152 @@
+# How to Run the Pet Social App
+
+1.  **Python:** The app is written in a language called Python. You need to install it. Go to this website: [https://www.python.org/downloads/](https://www.python.org/downloads/) and download the latest version. When you install it, **make sure to check the box that says "Add Python to PATH"** (or something similar). 
+
+2.  **MySQL:** Pet Social uses a database to store information. You'll need to install MySQL. Go to this website: [https://dev.mysql.com/downloads/mysql/](https://dev.mysql.com/downloads/mysql/) and download the "MySQL Community Server." You might need to create an account on the MySQL website. During the installation, it will ask you for a password. **Write this password down!** You'll need it later.
+
+3.  **MySQL Workbench (Optional, but Recommended):** This is a program that makes it easier to work with MySQL. It's like a visual tool for your database. You can download it from the same MySQL website as above.
+
+**Implementation**
+
+1.  **Get the Pet Social Files:** Someone should have given you the Pet Social files (either in a ZIP file or a link to download them). Put these files in a folder on your computer where you can easily find them (like on your Desktop or in your Documents folder). If it's a ZIP file, unzip it.
+
+2.  **Setup the Database:**
+
+    *   **If you installed MySQL Workbench:** Open MySQL Workbench. It will ask you to connect to your MySQL server. Use the password you wrote down earlier.
+    *   **If you don't have MySQL Workbench:** Ask the person who gave you the Pet Social files for help with setting up the database. This is a more complicated step.
+
+    *   Once you're connected to MySQL, run these commands. Type them in *exactly* as you see them, and then press "Run" or "Execute" (look for a lightning bolt icon if you're using MySQL Workbench):
+
+        ```sql
+        CREATE DATABASE social_network_pets CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+        USE social_network_pets;
+        ```
+
+    *   Next, you need to import the database information. Go to `File` -> `Open SQL Script...` and find the file called `social_network_pets_dump.sql` (it should be in the Pet Social files you downloaded). Then, press "Run" or "Execute" again.
+
+3.  **Install the Extra Pieces Pet Social Needs:**
+
+    *   Open the folder where you put the Pet Social files.
+    *   Hold down the Shift key and right-click in an empty space in the folder.
+    *   Choose "Open PowerShell window here" (or "Open Command Prompt here").
+
+   -Option 1: Install packages individually (This lets you see each installation happen):
+
+    Type each of these commands exactly and press Enter after each one:
+
+
+	pip install django==5.2.1
+	pip install mysqlclient
+	pip install Pillow
+	pip install Faker
+	pip install django-widget-tweaks
+	You'll see a message saying "Successfully installed..." after each one finishes.
+
+    -Option 2: Install all packages at once (This is faster, but harder to troubleshoot if something goes wrong):
+
+    Type this command exactly and press Enter:
+
+	pip install django==5.2.1 mysqlclient Pillow Faker django-widget-tweaks
+
+4.  **Run the App!**
+
+    *   In the same PowerShell or Command Prompt window, type this command *exactly* and press Enter:
+
+        ```
+        python manage.py runserver
+        ```
+
+        It will start the Pet Social app. You'll see some text scrolling in the window.
+
+5.  **Open the App in Your Web Browser:**
+
+    *   Open your web browser (like Chrome, Firefox, or Edge).
+    *   Type this into the address bar and press Enter:
+
+        ```
+        http://127.0.0.1:8000/
+        ```
+
+        You should see the Pet Social app!
+
+**That's It!**
+
+Now you should be able to use the Pet Social app. If you see any error messages, write them down and ask for help.
+
+**Important Notes:**
+
+*   Make sure MySQL is running! If the app doesn't work, check that MySQL is still running.
+*   Don't close the PowerShell or Command Prompt window while you're using the app! This window is running the app.
+*   This is just a simple way to run the app. If you want to use it for real, you'll need a more advanced setup.
+
+
+
+
+
+Database Seeding Process
+In our project, to generate realistic test data and enrich the database, we used the Python Faker library. A custom Django management command (seed) was created to automate the data generation process.
+
+Details of the Seed Command:
+Users:
+Created 1000 unique users. Each user was assigned a randomly generated username, email, password, city, and user type (PetOwner or Veterinarian).
+
+Pets:
+Each user was assigned between 1 and 3 pets randomly. The species (dog, cat, rabbit), age, gender, and registration date were randomly generated.
+
+Posts:
+Each user created between 1 and 5 posts with randomly generated content and creation timestamps.
+
+Comments:
+Each post received 0 to 5 comments from randomly selected users.
+
+Likes:
+Posts were randomly liked by multiple users.
+
+Messages:
+Generated 1000 random messages exchanged between different users.
+
+Running the Seed Command:
+bash
+
+python manage.py seed
+This command populates the database according to the above specifications and provides sample data for testing.
+
+Example Code Snippet:
+python
+
+from django.core.management.base import BaseCommand 
+from faker import Faker
+from mainapp.models import User, Pet, Post, Comment, Like, Message
+import random
+from django.utils import timezone
+from django.db.utils import IntegrityError
+
+class Command(BaseCommand):
+    help = 'Seed database with fake data'
+
+    def handle(self, *args, **kwargs):
+        fake = Faker()
+        users = []
+        self.stdout.write('Creating users and pets...')
+
+        for _ in range(1000):
+            while True:
+                username = f"{fake.user_name()}{random.randint(1, 10000)}"
+                if not User.objects.filter(username=username).exists():
+                    try:
+                        user = User.objects.create_user(
+                            username=username,
+                            email=fake.email(),
+                            password='password123',
+                            city=fake.city(),
+                            user_type=random.choice(['PetOwner', 'Veterinarian'])
+                        )
+                        users.append(user)
+                        break
+                    except IntegrityError:
+                        continue
+
+        # Code for creating pets, posts, comments, likes, and messages continues here...
+
+        self.stdout.write(self.style.SUCCESS('Database seeded successfully!'))
+

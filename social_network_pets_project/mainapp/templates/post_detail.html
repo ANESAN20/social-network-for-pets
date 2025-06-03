@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}Post Details{% endblock %}
+
+{% block content %}
+<h2>Post by {{ post.user.username }} on {{ post.created_at|date:"M d, Y H:i" }}</h2>
+
+<p>{{ post.content|linebreaksbr }}</p>
+
+{% if post.image %}
+  <img src="{{ post.image.url }}" alt="Post Image" class="img-fluid mb-3" style="max-width: 300px;">
+{% elif post.image_url %}
+  <img src="{{ post.image_url }}" alt="Post Image" class="img-fluid mb-3" style="max-width: 300px;">
+{% endif %}
+
+<form method="post" class="mb-3" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.content|add_class:"form-control mb-2" }}
+  <button name="comment_submit" type="submit" class="btn btn-primary">Add Comment</button>
+  {% if user_has_liked %}
+    <button name="like_submit" type="submit" class="btn btn-danger ms-2">Unlike</button>
+  {% else %}
+    <button name="like_submit" type="submit" class="btn btn-success ms-2">Like</button>
+  {% endif %}
+</form>
+
+<h3>Comments</h3>
+<ul class="list-group">
+  {% for comment in comments %}
+    <li class="list-group-item"><strong>{{ comment.user.username }}</strong>: {{ comment.content }}</li>
+  {% empty %}
+    <li class="list-group-item">No comments yet.</li>
+  {% endfor %}
+</ul>
+
+<a href="{% url 'post_list' %}" class="btn btn-secondary mt-3">Back to Posts</a>
+{% endblock %}

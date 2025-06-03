@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Add New Pet{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Add a New Pet</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p|safe }}
+    <button type="submit" class="btn btn-success">Add Pet</button>
+    <a href="{% url 'pet_list' %}" class="btn btn-secondary ms-2">Back to Pet List</a>
+  </form>
+</div>
+{% endblock %}

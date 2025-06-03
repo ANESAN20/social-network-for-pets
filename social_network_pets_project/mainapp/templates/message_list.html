@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Messages{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Messages</h2>
+  {% if messages %}
+  <ul class="list-group">
+    {% for message in messages %}
+      <li class="list-group-item">
+        <strong>{{ message.sender.username }}</strong> to <strong>{{ message.receiver.username }}</strong><br>
+        {{ message.content }}<br>
+        <small class="text-muted">{{ message.sent_at|date:"M d, Y H:i" }}</small>
+      </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+    <p>No messages found.</p>
+  {% endif %}
+  <a href="{% url 'send_message' %}" class="btn btn-primary mt-3">Send New Message</a>
+</div>
+{% endblock %}

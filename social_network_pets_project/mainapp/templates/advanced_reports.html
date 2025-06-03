@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Advanced Reports{% endblock %}
+
+{% block content %}
+<h2>Advanced Reports</h2>
+
+<h3>Total Posts by User (ID: {{ user_id }})</h3>
+<p>{{ total_posts }}</p>
+
+<h3>Top 5 Veterinarian Posts by Engagement (Likes + Comments)</h3>
+<ul>
+  {% for post in top_vet_posts %}
+    <li>
+      <strong>{{ post.user.username }}</strong>: {{ post.content|truncatechars:60 }}<br>
+      Likes: {{ post.likes_count }} | Comments: {{ post.comments_count }} | Engagement: {{ post.engagement }}
+    </li>
+  {% empty %}
+    <li>No veterinarian posts found.</li>
+  {% endfor %}
+</ul>
+
+<h3>Average Age of Pets by Breed</h3>
+<form method="get" action="{% url 'advanced_reports' %}">
+    <select name="breed" class="form-select" onchange="this.form.submit()">
+        <option value="">Select a breed</option>
+        {% for breed in breeds %}
+            <option value="{{ breed }}" {% if breed == selected_breed %}selected{% endif %}>{{ breed }}</option>
+        {% endfor %}
+    </select>
+</form>
+
+{% if avg_age_breed %}
+    <p>Average age of <strong>{{ selected_breed }}</strong> pets: {{ avg_age_breed|floatformat:1 }} years</p>
+{% else %}
+    <p>No data available for the selected breed.</p>
+{% endif %}
+
+<h3>Top 5 Pets with Most Friends</h3>
+<ul>
+  {% for pet in pets_with_friends %}
+    <li>
+      {{ pet.name }} - Friends: 
+      {% for entry in pet_friend_count.items %}
+        {% if entry.0 == pet.id %}
+          {{ entry.1 }}
+        {% endif %}
+      {% endfor %}
+    </li>
+  {% empty %}
+    <li>No pets found.</li>
+  {% endfor %}
+</ul>
+
+<h3>Top 5 Popular Pets by City</h3>
+<form method="get" action="{% url 'advanced_reports' %}">
+  <select name="city" class="form-select" onchange="this.form.submit()">
+    {% for c in cities %}
+      <option value="{{ c }}" {% if c == city %}selected{% endif %}>{{ c }}</option>
+    {% endfor %}
+  </select>
+</form>
+
+<ul>
+  {% if popular_pets %}
+    {% for pet in popular_pets %}
+      <li>{{ pet.name }} (Friends: {{ pet.friend_count }})</li>
+    {% endfor %}
+  {% else %}
+    <li>No popular pets found.</li>
+  {% endif %}
+</ul>
+
+<a href="{% url 'admin_dashboard' %}" class="btn btn-secondary mt-3">Back to Admin Dashboard</a>
+{% endblock %}
